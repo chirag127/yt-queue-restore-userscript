@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         YT Queue Restore
 // @namespace    https://github.com/chirag127
-// @version      1.0.1
+// @version      1.0.2
 // @description  A hover +Q button on feed and search video cards that adds the video to Watch Later in one click. Off by default.
 // @author       chirag127
 // @license      MIT
 // @match        https://www.youtube.com/*
-// @require      https://raw.githubusercontent.com/chirag127/yt-core-lib/main/yt-core-lib-1.3.0.js
+// @require      https://raw.githubusercontent.com/chirag127/yt-core-lib/main/yt-core-lib-1.4.0.js
 // @downloadURL  https://raw.githubusercontent.com/chirag127/yt-queue-restore-userscript/main/yt-queue-restore.user.js
 // @updateURL    https://raw.githubusercontent.com/chirag127/yt-queue-restore-userscript/main/yt-queue-restore.user.js
 // @grant        GM_getValue
