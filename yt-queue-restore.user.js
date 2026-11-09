@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YT Queue Restore
 // @namespace    https://github.com/chirag127
-// @version      1.0.0
+// @version      1.0.1
 // @description  A hover +Q button on feed and search video cards that adds the video to Watch Later in one click. Off by default.
 // @author       chirag127
 // @license      MIT
@@ -35,8 +35,11 @@
   'use strict';
 
   if (typeof Ytk === 'undefined') { console.error('[yt-queue-restore] core did not load'); return; }
-  if (!Ytk.featureOn('queueButtons', false)) return;
-  if (!/^\/($|results|feed\/|@|c\/|channel\/|user\/|subscriptions)/.test(location.pathname)) return;
+  // These gate the UI only. Gating the menu entry made the popup unreachable while
+  // the feature was off — the only way to turn it on is that popup.
+  const ENABLED = Ytk.featureOn('queueButtons', false);
+  const ON_SURFACE = ['/', '/results', '/feed', '/@', '/c/', '/channel/', '/user/', '/subscriptions']
+    .some(function (prefix) { return location.pathname.indexOf(prefix) === 0; });
 
   const CARD_SEL = 'ytd-rich-item-renderer, ytd-video-renderer, ytd-grid-video-renderer';
   const ID_RE = /[?&]v=([A-Za-z0-9_-]{11})/;
@@ -224,8 +227,10 @@
 
   GM_registerMenuCommand('Settings…', settingsPopup);
 
-  Ytk.mountToolbar([{ label: 'Queue', run: openQueue }]);
-  scan();
-  document.addEventListener('yt-navigate-finish', scheduleScan);
-  new MutationObserver(scheduleScan).observe(document.body || document.documentElement, { childList: true, subtree: true });
+  if (ENABLED && ON_SURFACE) {
+    Ytk.mountToolbar([{ label: 'Queue', run: openQueue }]);
+    scan();
+    document.addEventListener('yt-navigate-finish', scheduleScan);
+    new MutationObserver(scheduleScan).observe(document.body || document.documentElement, { childList: true, subtree: true });
+  }
 })();

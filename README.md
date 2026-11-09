@@ -1,62 +1,61 @@
 # YT Queue Restore
 
-Hover a card on a feed, search or channel page and click **＋Q** to add that video to **Watch Later**.
+A hover **+Q** button on feed and search video cards that puts the video straight into Watch Later,
+without opening the card's menu.
 
-**Off by default.** Enable it in **Settings…** first — nothing is drawn while it is off.
+**Off by default, on purpose.** With the feature switched off the script draws nothing and attaches
+no listener. The gate is `Ytk.featureOn('queueButtons', false)`, so switching it on is a deliberate
+act:
+
+- flip `features.queueButtons` in [yt-settings-userscript](https://github.com/chirag127/yt-settings-userscript)
+  — the single settings surface for the collection — or
+- once the buttons are visible, use this script's own **Settings…** entry, where the same flag is a
+  checkbox.
+
+Either way, reload the page after changing it.
+
+## What it does
+
+- Hovers over a card show **+Q** in the top-right corner of the thumbnail (top-left if you prefer).
+- Click adds that video to Watch Later with `Ytk.addVideos('WL', [videoId])`, which is the core's
+  InnerTube call: it needs the signed-in account that owns the list.
+- **Ask before adding a video** turns the click into a confirmation dialog.
+- The **Queue** button on the shared toolbar opens a panel listing the cards on this page with an
+  **Add** button each — the same action without hovering, which is easier on a trackpad or a touch
+  screen.
+
+This is the one script in the collection that writes to YouTube, and it writes exactly one thing:
+an add to Watch Later. It never removes, reorders, likes or plays anything.
 
 ## Where it runs
 
-Home, `/feed/…`, `/results` (search), `/@handle`, `/c/…`, `/channel/…`, `/user/…` and `/hashtag/…`.
-Not the watch page and not the playlist page.
+- the home feed, `/results` searches, `/feed/…`, channel pages, and `/subscriptions`
 
-## Install
-
-Read the [install guide](https://github.com/chirag127/userscript-install-guide), then:
-
-```
-https://github.com/chirag127/yt-queue-restore-userscript/raw/main/yt-queue-restore.user.js
-```
-
-Requires [`yt-core-lib`](https://github.com/chirag127/yt-core-lib), pulled in with `@require`.
-You do not install the core yourself.
+Not on the watch page, and not on a playlist page.
 
 ## Settings
 
-Exactly one context-menu entry, called **Settings…**:
+One entry — **Settings…** — opens the shared settings popup.
 
-| Setting | Default | Meaning |
-|---|---|---|
-| Enable the ＋Q hover buttons | **off** | the master switch; off means the script returns before drawing anything |
-| Show them on home, feed and channel pages | on | |
-| Show them on search results | on | |
-| Ask before adding a video to Watch Later | on | a confirmation prompt before every write |
+| Field | Key | Default | Purpose |
+|---|---|---|---|
+| Enable the hover +Q buttons | `queueButtons` | off | the script's own on/off switch, mirrored into the shared feature flag |
+| Ask before adding a video | `queueConfirm` | off | a confirmation dialog on every click |
+| Corner the button sits in | `queuePosition` | `top-right` | `top-right` or `top-left`; reload to move existing buttons |
 
-Saving in the popup reloads the page, which re-injects the buttons with the new settings.
+## Notes
 
-## How the write works
+- The button is click-through while hidden, so it never steals a click from the thumbnail.
+- The card is read again at click time. YouTube recycles card elements while you scroll, and an id
+  captured when the button was attached can belong to a different video by the time you press it.
+- Every add reports back: a success toast, or the reason it failed (usually "not signed in").
 
-`Ytk.addVideos('WL', [videoId])` from the core — one InnerTube `browse/edit_playlist` call signed with
-SAPISIDHASH from your own cookies. Nothing is scraped from the UI menus, and nothing is queued in the
-background: one click, one add.
+## Install
 
-## Storage
+Follow the [install guide](https://github.com/chirag127/userscript-install-guide). The script
+`@require`s [yt-core-lib](https://github.com/chirag127/yt-core-lib), which is never installed on
+its own.
 
-None of its own. It reads the shared `ytk.settings` (`queueButtons`, `queueOnFeed`, `queueOnSearch`,
-`queueConfirm`) and mirrors the master switch into `ytk.settings.features.queueButtons`, which is what
-`Ytk.featureOn` reads.
+## Docs
 
-## What it does NOT do
-
-- It never removes anything from Watch Later, and has no bulk mode — one card per click.
-- It does not touch the default watch queue, only Watch Later (`WL`).
-- It does not add videos on the watch page's own "up next" panel.
-
-## Why it is off by default
-
-It injects a button into every card on every feed, which is page chrome the user did not ask for. The
-old all-in-one toolkit shipped it on and the user hit exactly that. Off by default is the rule for
-anything that draws on surfaces you did not open for it.
-
-## License
-
-MIT
+Collection documentation is single-sourced in the workspace bundle: `c:\ws\docs\okf\`.
