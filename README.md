@@ -3,16 +3,12 @@
 A hover **+Q** button on feed and search video cards that puts the video straight into Watch Later,
 without opening the card's menu.
 
-**Off by default, on purpose.** With the feature switched off the script draws nothing and attaches
-no listener. The gate is `Ytk.featureOn('queueButtons', false)`, so switching it on is a deliberate
-act:
+**Off by default, on purpose.** With the feature switched off the script draws no queue UI and
+attaches no page listeners. The gate is `Ytk.featureOn('queueButtons', false)`.
 
-- flip `features.queueButtons` in [yt-settings-userscript](https://github.com/chirag127/yt-settings-userscript)
-  — the single settings surface for the collection — or
-- once the buttons are visible, use this script's own **Settings…** entry, where the same flag is a
-  checkbox.
-
-Either way, reload the page after changing it.
+To configure it, open this script's **Settings…** entry in your userscript manager on YouTube.
+The menu entry is available even while the hover buttons are off. Use **Enable the hover +Q
+buttons**, then **Save** and reload the page after changing the switch.
 
 ## What it does
 
@@ -35,7 +31,8 @@ Not on the watch page, and not on a playlist page.
 
 ## Settings
 
-One entry — **Settings…** — opens the shared settings popup.
+One entry — **Settings…** — calls `Ytk.openSettings` from
+[yt-core-lib](https://github.com/chirag127/yt-core-lib) to open the shared settings popup.
 
 | Field | Key | Default | Purpose |
 |---|---|---|---|
