@@ -20,8 +20,8 @@ buttons**, then **Save** and reload the page after changing the switch.
   **Add** button each — the same action without hovering, which is easier on a trackpad or a touch
   screen.
 
-This is the one script in the collection that writes to YouTube, and it writes exactly one thing:
-an add to Watch Later. It never removes, reorders, likes or plays anything.
+This script writes exactly one thing to YouTube: an add to Watch Later. It never removes, reorders,
+likes or plays anything.
 
 ## Where it runs
 
