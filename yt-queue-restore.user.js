@@ -182,7 +182,6 @@
   // ---------------------------------------------------------------- settings
 
   function settingsPopup() {
-    const before = raw();
     Ytk.openSettings({
       title: 'YT Queue Restore',
       subtitle: 'The hover buttons are off by default. Turn them on when you want them.',
@@ -213,13 +212,13 @@
       actions: [
         { label: 'Open the Watch Later list for this page', run: openQueue }
       ],
-      onSave: function (next) {
-        // Core 1.3.0 drops keys it does not know, so merge back, then keep the feature
-        // flag in step with the checkbox that turns this script on.
-        const merged = Object.assign({}, before, next);
-        const on = merged.queueButtons === undefined ? Ytk.featureOn('queueButtons', false) : merged.queueButtons === true;
-        merged.queueButtons = on;
-        merged.features = Object.assign({}, before.features || {}, { queueButtons: on });
+      onSave: function () {
+        // Core saves the draft first, but passes only its DEFAULTS view to onSave.
+        // Read the saved checkbox and preserve all current script-specific settings.
+        const current = raw();
+        const on = current.queueButtons === true;
+        const merged = Object.assign({}, current, { queueButtons: on });
+        merged.features = Object.assign({}, current.features || {}, { queueButtons: on });
         Ytk.storeSet('settings', merged);
       }
     });
